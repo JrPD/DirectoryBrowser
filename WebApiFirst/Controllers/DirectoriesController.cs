@@ -9,7 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Http;
-using Directory = WebApiFirst.Models.Directory;
+using DirectoryItems = WebApiFirst.Models.DirectoryItems;
 
 namespace WebApiFirst.Controllers
 {
@@ -29,19 +29,19 @@ namespace WebApiFirst.Controllers
 		}
 
 		// init directories
-		public IEnumerable<Directory> GetAlldirectories()
+		public IEnumerable<DirectoryItems> GetAlldirectories()
 		{
 			string path = HttpRuntime.AppDomainAppPath;
 			var info = new System.IO.DirectoryInfo(path);
 
-			List<Directory> directories= AllDirs(info);
+			List<DirectoryItems> directories = AllDirs(info);
 
 			return directories;
 		}
 
-		public List<Directory> AllDirs(System.IO.DirectoryInfo info)
+		public List<DirectoryItems> AllDirs(System.IO.DirectoryInfo info)
 		{
-			List<Directory> items = new List<Directory>();
+			List<DirectoryItems> items = new List<DirectoryItems>();
 			DirectoryInfo[] dir = null;
 			FileInfo[] files = null;
 
@@ -81,20 +81,23 @@ namespace WebApiFirst.Controllers
 			// if root, add discs
 			if (info.Name.ToLower() == info.Root.Name)
 			{
-				items.Add(new Directory()
+				items.Add(new DirectoryItems()
 				{
 					Path = "c:\\", Name = "C",
 					FilesSmall = FilesCount.Small,
 					FilesHeight = FilesCount.Height,
 					FilesMedium = FilesCount.Medium
 				});
-				items.Add(new Directory() {Path = "e:\\", Name = "E"});
+				items.Add(new DirectoryItems() { Path = "e:\\", Name = "E" });
 			}
 			else
 			{
 				// add parent directory link
 				if (info.Parent != null)
-					items.Add(new Directory() {Path = info.Parent.FullName, Name = "../",
+					items.Add(new DirectoryItems()
+					{
+						Path = info.Parent.FullName,
+						Name = "../",
 						FilesSmall = FilesCount.Small,
 						FilesHeight = FilesCount.Height,
 						FilesMedium =  FilesCount.Medium});
@@ -102,11 +105,11 @@ namespace WebApiFirst.Controllers
 
 			// add directories to list
 			if(dir!=null)
-				items.AddRange(dir.Select(item => new Directory() {Path = item.FullName, Name = item.Name}));
+				items.AddRange(dir.Select(item => new DirectoryItems { Path = item.FullName, Name = item.Name }));
 			
 			// add files to list
 			if (files!=null)
-				items.AddRange(files.Select(file => new Directory() {Path = file.FullName, Name = file.Name}));
+				items.AddRange(files.Select(file => new DirectoryItems { Path = file.FullName, Name = file.Name }));
 			return items;
 		}
 

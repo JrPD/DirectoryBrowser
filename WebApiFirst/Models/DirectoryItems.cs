@@ -5,7 +5,7 @@ using System.Web;
 
 namespace WebApiFirst.Models
 {
-	public class Directory
+	public class DirectoryItems
 	{
 		public string Path { get; set; }
 		public string Name { get; set; }
