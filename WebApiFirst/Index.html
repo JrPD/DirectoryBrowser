@@ -6,50 +6,44 @@
 	<script src="/Scripts/jquery-2.0.3.min.js"></script>
 	<script src="/Scripts/bootstrap.js"></script>
 	<script src="/Scripts/angular.js"></script>
-	<script src="/Scripts/angular-resource.js"></script>
-	<script src="/Scripts/angular-route.js"></script>
+	<script src="Scripts/app/dirManager.js"></script>
+
 	<style>
-		.col-md-4 {
-			border: 1px solid  #00ff00;
+		.col-md-3 {
+			border: 1px solid #00ff00;
 		}
 		li:hover {
-			border: 1px solid  #00bfff;
+			border: 1px solid #00bfff;
 		}
-	</style>			
+		.dirLoadingImg {
+			height: 30px;
+		}
+	</style>
 </head>
-<body style="padding: 20px 30%;  text-align: left">
-	<h2>Browse Directories</h2>
+<body style="padding: 20px 30%; text-align: left">
+
+<h2>Browse Directories</h2>
 <div ng-app="myapp" ng-controller="dirCtrl">
 	<div class="row">
 
-		<div class="col-md-4">
-			<div>
-				Less than 10Mb
-			</div>
-			<div>
-				{{filesSmall}}
-			</div>
+		<div class="col-md-3">
+			<div>Less than 10Mb</div>
+			<div>{{filesSmall}}</div>
+		</div>
+		<div class="col-md-3">
+			<div>10Mb-50Mb</div>
+			<div>{{filesMedium}}</div>
+		</div>
+		<div class="col-md-3">
+			<div>More 50Mb</div>
+			<div>{{filesHeight}}</div>
+		</div>
+		<div class="col-md-1">
+			<img id="LoadingImage" class="dirLoadingImg" hidden src="Content/ajax-loader-large.gif"/>
 		</div>
 
-		<div class="col-md-4">
-			<div>
-				10Mb-50Mb
-			</div>
-
-			<div>
-				{{filesMedium}}
-			</div>
-		</div>
-		<div class="col-md-4">
-			<div>
-				More 50Mb
-			</div>
-
-			<div>
-				{{filesHeight}}
-			</div>
-		</div>
 	</div>
+
 	<div style="height: 30px; padding: 10px 0">Current directory: {{currentDir}}</div>
 
 	<div>
@@ -59,13 +53,12 @@
 			</li>
 		</ul>
 	</div>
-	<div>{{message}}</div>
 
 </div>
-<script type="text/javascript" src="/Scripts/angular.min.js"></script>
 
-<script src="Scripts/app/dirManager.js"></script>
-<!--<script src="Scripts/app/dirManagerClient.js"></script>-->
+</body>
+
+</html>
 
 <!--<div>
 	<h2>All Directories</h2>
@@ -85,8 +78,8 @@
 	  // Send an AJAX request
 	  $.getJSON(uri)
 		  .done(function (data) {
-		  	// On success, 'data' contains a list of directories.
-		  	FillList(data);
+			// On success, 'data' contains a list of directories.
+			FillList(data);
 		  });
 	});
 
@@ -141,5 +134,3 @@
 		  });
 	}
 	</script>-->
-</body>
-</html>

@@ -8,6 +8,7 @@
 		$scope.filesSmall = response[0].FilesSmall;
 		$scope.filesMedium = response[0].FilesMedium;
 		$scope.filesHeight = response[0].FilesHeight;
+		$("#LoadingImage").hide();
 	}
 
 	function browse(dirs, $scope, $http) {
@@ -18,14 +19,21 @@
 		$http({
 					method: 'GET',
 					url: uri,
+					dataType: 'json',
 					params: { dir: JSON.stringify(dirs) }
 				}
 			)
 			.success(function (response) {
 				fillInFields($scope, response);
 			})
-			.error(function(response) {
-				alert("ERROR");
+			.error(function (response) {
+				$("#LoadingImage").hide();
+
+				if (response.Message!= null)
+					alert((response.Message));
+				else {
+					alert((response));
+				}
 			});
 	}
 
@@ -38,19 +46,22 @@
 		$scope.currentDir = "";
 
 		var uri = "/api/directories";
+		$("#LoadingImage").show();
 
 		// getting list of dirs and files
 		$http.get(uri)
 			.success(function (response) {
-
 				$scope.currentDir = response[0].Path;
 				fillInFields($scope, response);
 			})
 			.error(function(response) {
 				alert(response);
+				$("#LoadingImage").hide();
 			});
 
 		function click(a) {
+			$("#LoadingImage").show();
+
 			// split path to post data to server
 			var path = a.x.Path.split("\\");
 

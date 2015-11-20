@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data.SqlTypes;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web;
+using System.Web.Helpers;
 using System.Web.Http;
 using DirectoryItems = WebApiFirst.Models.DirectoryItems;
 
@@ -18,13 +21,16 @@ namespace WebApiFirst.Controllers
 		// to recursive function WalkDirectoryTree
 		private readonly int _deepLevel;
 
+		private static StringBuilder TraceErrors = new StringBuilder();
+
+
 		public DirectoriesController()
 		{
 			//set deep level from web.config
-			_deepLevel = Convert.ToInt32(ConfigurationManager.AppSettings["deepLevel"]);
+			int.TryParse(ConfigurationManager.AppSettings["deepLevel"], out _deepLevel);
 			if (_deepLevel==0)
 			{
-				_deepLevel = 1;
+				_deepLevel = 2;
 			}
 		}
 
@@ -48,26 +54,40 @@ namespace WebApiFirst.Controllers
 			// get derectories
 			try
 			{
-				if (info.Attributes == FileAttributes.Directory)
+				if (info.Attributes.HasFlag(FileAttributes.Directory))
 				{
 					files = info.GetFiles("*.*");
 					dir = info.GetDirectories();
 				}
 				else
 				{
-					throw new UnauthorizedAccessException();
+					throw new Exception();
 				}
 			}
-			catch (DirectoryNotFoundException)
+			catch (DirectoryNotFoundException e)
 			{
-				//throw new UnauthorizedAccessException();
+				lock (TraceErrors)
+				{
+					TraceErrors.AppendLine(e.Message);
+				}
 			}
-			catch (UnauthorizedAccessException)
+			catch (UnauthorizedAccessException e)
 			{
+				lock (TraceErrors)
+				{
+					TraceErrors.AppendLine(e.Message);
+				}
 				// if no access
 				info = info.Parent;
 				if (info != null) dir = info.GetDirectories();
 				if (info != null) files = info.GetFiles("*.*");
+			}
+			catch (Exception ex)
+			{
+				lock (TraceErrors)
+				{
+					TraceErrors.AppendLine("It is a file!");
+				}
 			}
 
 			// count small, medium, height weight files
@@ -123,8 +143,8 @@ namespace WebApiFirst.Controllers
 			WalkDirectoryTree(info, _deepLevel);
 
 			Debug.WriteLine("{0} - {1}", "<10", FilesCount.Small);
-			Debug.WriteLine("{0} - {1}", "10<50<100", FilesCount.Medium);
-			Debug.WriteLine("{0} - {1}", ">100", FilesCount.Height);
+			Debug.WriteLine("{0} - {1}", "10<X<50", FilesCount.Medium);
+			Debug.WriteLine("{0} - {1}", ">50", FilesCount.Height);
 		}
 
 		/// <summary>
@@ -136,12 +156,21 @@ namespace WebApiFirst.Controllers
 		{
 			string path = MakePath(dir);
 			var info = new System.IO.DirectoryInfo(path);
-
+			lock (TraceErrors)
+			{
+				TraceErrors.Clear();
+			}
 			var directories = AllDirs(info);
 
 			if (directories.Count == 0)
 			{
 				return NotFound();
+			}
+
+			
+			if (TraceErrors.Length != 0)
+			{
+				return Content(HttpStatusCode.BadRequest, TraceErrors.ToString());
 			}
 			return Ok(directories);
 		}
@@ -189,7 +218,12 @@ namespace WebApiFirst.Controllers
 				Height = 0;
 			}
 		}
-
+		//todo height - large
+		enum FileSizes 
+		{
+			Small=10,
+			Medium =50,
+		}
 		/// <summary>
 		/// resursive obtain information about files in directory and subdirectories
 		/// </summary>
@@ -197,9 +231,8 @@ namespace WebApiFirst.Controllers
 		/// <param name="deepLevel"></param>
 		private static void WalkDirectoryTree(DirectoryInfo root, int deepLevel)
 		{
-
+			const int mbyte = 1024*1024;
 			System.IO.FileInfo[] files = null;
-			System.IO.DirectoryInfo[] subDirs = null;
 			try
 			{
 				files = root.GetFiles("*.*");
@@ -223,31 +256,29 @@ namespace WebApiFirst.Controllers
 			deepLevel--;
 			foreach (FileInfo file in files)
 			{
-				//string fileFullName = file.FullName;
-				double fileSize = Convert.ToDouble(file.Length);
-				if (fileSize != 0)
+				double fileSize = file.Length;
+				if (fileSize != 0.0)
 				{
-					fileSize /= 1024;
+					fileSize /= mbyte;
+					Debug.WriteLine("{0}", fileSize);
 				}
-				Debug.WriteLine("{0}", fileSize);
-				fileSize /= 1024;
-				if (fileSize < 10)
+				
+				if (fileSize < (int) FileSizes.Small)
 				{
 					FilesCount.AddSmall();
 				}
-				else if (fileSize < 50)
+				else if (fileSize < (int)FileSizes.Medium)
 				{
 					FilesCount.AddMedium();
 				}
 				else
 				{
 					FilesCount.AddHeight();
-
 				}
 			}
-			if (deepLevel <= 0)
+			if (deepLevel >= 0)
 			{
-				subDirs = root.GetDirectories();
+				var subDirs = root.GetDirectories();
 				foreach (DirectoryInfo dirInfo in subDirs)
 				{
 					WalkDirectoryTree(dirInfo, deepLevel);
