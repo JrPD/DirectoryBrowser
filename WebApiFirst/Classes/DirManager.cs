@@ -88,7 +88,7 @@ namespace WebApiFirst.Classes
 			CountFiles(info);
 
 			// if root, add discs
-			if (info.Name.ToLower() == info.Root.Name)
+			if (info.Name.ToLower() == info.Root.Name.ToLower())
 			{
 				items.Add(new DirectoryItems()
 				{
@@ -205,6 +205,5 @@ namespace WebApiFirst.Classes
 			Debug.WriteLine("{0} - {1}", "10<X<50", FilesCount.Medium);
 			Debug.WriteLine("{0} - {1}", ">50", FilesCount.Large);
 		}
-
 	}
 }
