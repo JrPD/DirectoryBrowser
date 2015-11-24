@@ -11,6 +11,6 @@ namespace WebApiFirst.Models
 		public string Name { get; set; }
 		public int FilesSmall { get; set; }
 		public int FilesMedium { get; set; }
-		public int FilesHeight { get; set; }
+		public int FilesLarge { get; set; }
 	}
 }

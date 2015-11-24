@@ -886,6 +886,8 @@
   <ItemGroup>
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Classes\DirManager.cs" />
+    <Compile Include="Classes\FilesCount.cs" />
     <Compile Include="Controllers\DirectoriesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
