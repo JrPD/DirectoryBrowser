@@ -12,6 +12,7 @@ namespace WebApiFirst.Controllers
 {
 	public class DirectoriesController : ApiController
 	{
+		private Log _loger = Log.GetLog();
 		// init directories
 		public IEnumerable<DirectoryItems> GetDirectories()
 		{
@@ -31,24 +32,22 @@ namespace WebApiFirst.Controllers
 		/// <returns>subdirectories with parent directory</returns>
 		public IHttpActionResult GetDirectories(string dir)
 		{
-			lock (DirManager.TraceErrors)
-			{
-				DirManager.TraceErrors.Clear();
-			}
-
+			_loger.Clear();
 			var manager = new DirManager();
 			var info = manager.GetDirInfo(dir);
 
 			var directories = manager.GetDirs(info);
 
+			
+
+			if (_loger.ToString().Length != 0)
+			{
+				return Content(HttpStatusCode.BadRequest, _loger.ToString());
+			}
+
 			if (directories.Count == 0)
 			{
 				return NotFound();
-			}
-
-			if (DirManager.TraceErrors.Length != 0)
-			{
-				return Content(HttpStatusCode.BadRequest, DirManager.TraceErrors.ToString());
 			}
 			return Ok(directories);
 		}

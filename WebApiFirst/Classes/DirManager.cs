@@ -12,8 +12,7 @@ namespace WebApiFirst.Classes
 {
 	public class DirManager
 	{
-		public static StringBuilder TraceErrors = new StringBuilder();
-
+		private Log _loger = Log.GetLog();
 		// to recursive function WalkDirectoryTree
 		private readonly int _deepLevel;
 
@@ -21,7 +20,7 @@ namespace WebApiFirst.Classes
 		{
 			//set deep level from web.config
 			int.TryParse(ConfigurationManager.AppSettings["deepLevel"], out _deepLevel);
-			if (_deepLevel==0)
+			if (_deepLevel == 0)
 			{
 				_deepLevel = 2;
 			}
@@ -42,23 +41,27 @@ namespace WebApiFirst.Classes
 
 			if (info == null)
 			{
-				return items;
+				return null;
 			}
 
 			GetFilesAndDirs(ref files, ref dir, info);
 
+			if (files == null)
+			{
+				return items;
+			}
 			// count small, medium, large weight files
 			CountFiles(info);
 
 			CheckIfRoot(items, info);
-			
+
 			// add directories to list
 			if (dir != null)
-				items.AddRange(dir.Select(item => new DirectoryItems { Path = item.FullName, Name = item.Name }));
+				items.AddRange(dir.Select(item => new DirectoryItems {Path = item.FullName, Name = item.Name}));
 
 			// add files to list
 			if (files != null)
-				items.AddRange(files.Select(file => new DirectoryItems { Path = file.FullName, Name = file.Name }));
+				items.AddRange(files.Select(file => new DirectoryItems {Path = file.FullName, Name = file.Name}));
 			return items;
 		}
 
@@ -75,7 +78,7 @@ namespace WebApiFirst.Classes
 					FilesLarge = FilesCount.Large,
 					FilesMedium = FilesCount.Medium
 				});
-				items.Add(new DirectoryItems() { Path = "e:\\", Name = "E" });
+				items.Add(new DirectoryItems() {Path = "e:\\", Name = "E"});
 			}
 			else
 			{
@@ -104,33 +107,25 @@ namespace WebApiFirst.Classes
 				}
 				else
 				{
-					throw new Exception();
+					_loger.Write("It is a FILE");
 				}
 			}
 			catch (DirectoryNotFoundException e)
 			{
-				lock (TraceErrors)
-				{
-					TraceErrors.AppendLine(e.Message);
-				}
+				_loger.Write(e.Message);
 			}
 			catch (UnauthorizedAccessException e)
 			{
-				lock (TraceErrors)
-				{
-					TraceErrors.AppendLine(e.Message);
-				}
+				_loger.Write(e.Message);
+
 				// if no access
 				info = info.Parent;
 				if (info != null) dir = info.GetDirectories();
 				if (info != null) files = info.GetFiles("*.*");
 			}
-			catch (Exception ex)
+			catch (Exception e)
 			{
-				lock (TraceErrors)
-				{
-					TraceErrors.AppendLine("It is a file!");
-				}
+				_loger.Write(e.Message);
 			}
 		}
 
@@ -139,7 +134,7 @@ namespace WebApiFirst.Classes
 		/// </summary>
 		/// <param name="root"></param>
 		/// <param name="deepLevel"></param>
-		public  void WalkDirectoryTree(DirectoryInfo root, int deepLevel)
+		public void WalkDirectoryTree(DirectoryInfo root, int deepLevel)
 		{
 			FileInfo[] files = null;
 
@@ -162,26 +157,22 @@ namespace WebApiFirst.Classes
 
 		private void CountFileWeight(ref FileInfo[] files)
 		{
-			const int mbyte = 1024 * 1024;
+			const int mbyte = 1024*1024;
 
-			if (files==null)
-			{
-				return;
-			}
 			foreach (FileInfo file in files)
 			{
 				double fileSize = file.Length;
 				if (fileSize != 0.0)
 				{
 					fileSize /= mbyte;
-					Debug.WriteLine("{0}", fileSize);
+					//Debug.WriteLine("{0}", fileSize);
 				}
 
-				if (fileSize < (int)FileSizes.Small)
+				if (fileSize < (int) FileSizes.Small)
 				{
 					FilesCount.AddSmall();
 				}
-				else if (fileSize < (int)FileSizes.Medium)
+				else if (fileSize < (int) FileSizes.Medium)
 				{
 					FilesCount.AddMedium();
 				}
