@@ -18,12 +18,23 @@
 		.dirLoadingImg {
 			height: 30px;
 		}
+		.mainContainer {
+			padding	: 0 400px;
+			text-align: left;
+			min-width: 50%;
+			min-height: 50%;
+		}
+		.current {
+			padding: 10px 5px;
+			height: 30px
+		}
 	</style>
 </head>
-<body style="padding: 20px 30%; text-align: left">
+<body class="mainContainer">
 
-<h2>Browse Directories</h2>
+
 <div ng-app="myapp" ng-controller="dirCtrl">
+	<h2>Browse Directories</h2>
 	<div class="row">
 
 		<div class="col-md-3">
@@ -44,10 +55,10 @@
 
 	</div>
 
-	<div style="height: 30px; padding: 10px 0">Current directory: {{currentDir}}</div>
+	<div class="row current">Current directory: <b>{{currentDir}}</b></div>
 
-	<div>
-		<ul id="dirList" style="list-style-type: none; padding-top: 20px;">
+	<div class="row">
+		<ul id="" style="list-style-type: none; padding: 20px; 0">
 			<li style="padding: 5px 20px;" ng-repeat="x in directories" ng-click="click(this)">
 				<a href="#{{x.Path}}"> {{x.Name}}</a>
 			</li>
