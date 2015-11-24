@@ -40,6 +40,60 @@ namespace WebApiFirst.Classes
 			DirectoryInfo[] dir = null;
 			FileInfo[] files = null;
 
+			if (info == null)
+			{
+				return items;
+			}
+
+			GetFilesAndDirs(ref files, ref dir, info);
+
+			// count small, medium, large weight files
+			CountFiles(info);
+
+			CheckIfRoot(items, info);
+			
+			// add directories to list
+			if (dir != null)
+				items.AddRange(dir.Select(item => new DirectoryItems { Path = item.FullName, Name = item.Name }));
+
+			// add files to list
+			if (files != null)
+				items.AddRange(files.Select(file => new DirectoryItems { Path = file.FullName, Name = file.Name }));
+			return items;
+		}
+
+		private void CheckIfRoot(List<DirectoryItems> items, DirectoryInfo info)
+		{
+			// if root, add discs
+			if (info.Name.ToLower() == info.Root.Name.ToLower())
+			{
+				items.Add(new DirectoryItems()
+				{
+					Path = "c:\\",
+					Name = "C",
+					FilesSmall = FilesCount.Small,
+					FilesLarge = FilesCount.Large,
+					FilesMedium = FilesCount.Medium
+				});
+				items.Add(new DirectoryItems() { Path = "e:\\", Name = "E" });
+			}
+			else
+			{
+				// add parent directory link
+				if (info.Parent != null)
+					items.Add(new DirectoryItems()
+					{
+						Path = info.Parent.FullName,
+						Name = "../",
+						FilesSmall = FilesCount.Small,
+						FilesLarge = FilesCount.Large,
+						FilesMedium = FilesCount.Medium
+					});
+			}
+		}
+
+		private void GetFilesAndDirs(ref FileInfo[] files, ref DirectoryInfo[] dir, DirectoryInfo info)
+		{
 			// get derectories
 			try
 			{
@@ -78,50 +132,6 @@ namespace WebApiFirst.Classes
 					TraceErrors.AppendLine("It is a file!");
 				}
 			}
-
-			// count small, medium, height weight files
-
-			if (info == null)
-			{
-				return items;
-			}
-			CountFiles(info);
-
-			// if root, add discs
-			if (info.Name.ToLower() == info.Root.Name.ToLower())
-			{
-				items.Add(new DirectoryItems()
-				{
-					Path = "c:\\",
-					Name = "C",
-					FilesSmall = FilesCount.Small,
-					FilesLarge = FilesCount.Large,
-					FilesMedium = FilesCount.Medium
-				});
-				items.Add(new DirectoryItems() { Path = "e:\\", Name = "E" });
-			}
-			else
-			{
-				// add parent directory link
-				if (info.Parent != null)
-					items.Add(new DirectoryItems()
-					{
-						Path = info.Parent.FullName,
-						Name = "../",
-						FilesSmall = FilesCount.Small,
-						FilesLarge = FilesCount.Large,
-						FilesMedium = FilesCount.Medium
-					});
-			}
-
-			// add directories to list
-			if (dir != null)
-				items.AddRange(dir.Select(item => new DirectoryItems { Path = item.FullName, Name = item.Name }));
-
-			// add files to list
-			if (files != null)
-				items.AddRange(files.Select(file => new DirectoryItems { Path = file.FullName, Name = file.Name }));
-			return items;
 		}
 
 		/// <summary>
@@ -129,31 +139,35 @@ namespace WebApiFirst.Classes
 		/// </summary>
 		/// <param name="root"></param>
 		/// <param name="deepLevel"></param>
-		public static void WalkDirectoryTree(DirectoryInfo root, int deepLevel)
+		public  void WalkDirectoryTree(DirectoryInfo root, int deepLevel)
 		{
-			const int mbyte = 1024 * 1024;
-			System.IO.FileInfo[] files = null;
-			try
-			{
-				files = root.GetFiles("*.*");
-			}
-			catch (UnauthorizedAccessException e)
-			{
-				Debug.WriteLine(e.Message);
-			}
-			catch (System.IO.DirectoryNotFoundException e)
-			{
-				Debug.WriteLine(e.Message);
-			}
-			catch (PathTooLongException e)
-			{
-				Debug.WriteLine(e.Message);
-			}
+			FileInfo[] files = null;
+
+			Getfiles(ref files, root);
 			if (files == null)
 			{
 				return;
 			}
+			CountFileWeight(ref files);
+
 			deepLevel--;
+			if (deepLevel < 0) return;
+
+			var subDirs = root.GetDirectories();
+			foreach (DirectoryInfo dirInfo in subDirs)
+			{
+				WalkDirectoryTree(dirInfo, deepLevel);
+			}
+		}
+
+		private void CountFileWeight(ref FileInfo[] files)
+		{
+			const int mbyte = 1024 * 1024;
+
+			if (files==null)
+			{
+				return;
+			}
 			foreach (FileInfo file in files)
 			{
 				double fileSize = file.Length;
@@ -176,13 +190,25 @@ namespace WebApiFirst.Classes
 					FilesCount.AddLarge();
 				}
 			}
-			if (deepLevel >= 0)
+		}
+
+		private void Getfiles(ref FileInfo[] files, DirectoryInfo root)
+		{
+			try
 			{
-				var subDirs = root.GetDirectories();
-				foreach (DirectoryInfo dirInfo in subDirs)
-				{
-					WalkDirectoryTree(dirInfo, deepLevel);
-				}
+				files = root.GetFiles("*.*");
+			}
+			catch (UnauthorizedAccessException e)
+			{
+				Debug.WriteLine(e.Message);
+			}
+			catch (System.IO.DirectoryNotFoundException e)
+			{
+				Debug.WriteLine(e.Message);
+			}
+			catch (PathTooLongException e)
+			{
+				Debug.WriteLine(e.Message);
 			}
 		}
 

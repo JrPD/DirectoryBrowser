@@ -7,7 +7,7 @@
 		$scope.directories = response;
 		$scope.filesSmall = response[0].FilesSmall;
 		$scope.filesMedium = response[0].FilesMedium;
-		$scope.filesHeight = response[0].FilesHeight;
+		$scope.filesHeight = response[0].FilesLarge;
 		$("#LoadingImage").hide();
 	}
 

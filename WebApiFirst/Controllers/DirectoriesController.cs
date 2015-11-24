@@ -12,9 +12,6 @@ namespace WebApiFirst.Controllers
 {
 	public class DirectoriesController : ApiController
 	{
-		
-
-		
 		// init directories
 		public IEnumerable<DirectoryItems> GetDirectories()
 		{
@@ -34,13 +31,14 @@ namespace WebApiFirst.Controllers
 		/// <returns>subdirectories with parent directory</returns>
 		public IHttpActionResult GetDirectories(string dir)
 		{
-			var manager = new DirManager();
-			var info = manager.GetDirInfo(dir);
-
 			lock (DirManager.TraceErrors)
 			{
 				DirManager.TraceErrors.Clear();
 			}
+
+			var manager = new DirManager();
+			var info = manager.GetDirInfo(dir);
+
 			var directories = manager.GetDirs(info);
 
 			if (directories.Count == 0)
