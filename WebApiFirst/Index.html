@@ -4,42 +4,43 @@
 	<title>directory App</title>
 	<link rel="stylesheet" type="text/css" href="/Content/bootstrap.min.css" />
 	<link rel="stylesheet" type="text/css" href="/Content/Site.css" />
-	<script src="/Scripts/jquery-2.0.3.min.js"></script>
-	<script src="/Scripts/angular.js"></script>
-	<script src="Scripts/app/dirManager.js"></script>
 </head>
 <body class="mainContainer">
 
-	<div ng-app="myapp" ng-controller="dirCtrl">
-		<h2>Browse Directories</h2>
-		<div class="row">
+<div ng-app="myapp" ng-controller="dirCtrl">
+	<h2>Browse Directories</h2>
+	<div class="row">
 
-			<div class="col-md-3">
-				<div>Less than 10Mb</div>
-				<div>{{filesSmall}}</div>
-			</div>
-			<div class="col-md-3">
-				<div>10Mb-50Mb</div>
-				<div>{{filesMedium}}</div>
-			</div>
-			<div class="col-md-3">
-				<div>More 50Mb</div>
-				<div>{{filesHeight}}</div>
-			</div>
-			<div class="col-md-1">
-				<img id="LoadingImage" class="dirLoadingImg" hidden src="Content/ajax-loader-large.gif" />
-			</div>
+		<div class="col-md-3">
+			<div>Less than 10Mb</div>
+			<div>{{filesSmall}}</div>
 		</div>
-
-		<div class="row current">Current directory: <b>{{currentDir}}</b></div>
-
-		<div class="row">
-			<ul id="" style="list-style-type: none; padding: 20px 0">
-				<li style="padding: 5px 20px;" ng-repeat="x in directories" ng-click="click(this)">
-					<a href="#{{x.Path}}"> {{x.Name}}</a>
-				</li>
-			</ul>
+		<div class="col-md-3">
+			<div>10Mb-50Mb</div>
+			<div>{{filesMedium}}</div>
+		</div>
+		<div class="col-md-3">
+			<div>More 50Mb</div>
+			<div>{{filesHeight}}</div>
+		</div>
+		<div class="col-md-1">
+			<img id="LoadingImage" class="dirLoadingImg" hidden src="Content/ajax-loader-large.gif"/>
 		</div>
 	</div>
+
+	<div class="row current">Current directory: <b>{{currentDir}}</b>
+	</div>
+
+	<div class="row">
+		<ul id="" style="list-style-type: none; padding: 20px 0">
+			<li style="padding: 5px 20px;" ng-repeat="x in directories" ng-click="click(this)">
+				<a href="#{{x.Path}}"> {{x.Name}}</a>
+			</li>
+		</ul>
+	</div>
+</div>
+	<script src="/Scripts/jquery-2.0.3.min.js"></script>
+	<script src="/Scripts/angular.js"></script>
+	<script src="Scripts/app/dirManager.js"></script>
 </body>
 </html>
