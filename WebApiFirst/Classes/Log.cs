@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Web;
+﻿using System.Text;
 
 namespace WebApiFirst.Classes
 {
@@ -13,12 +8,11 @@ namespace WebApiFirst.Classes
 
 		private static object syncLock = new object();
 
-		StringBuilder _logger = new StringBuilder();
+		private StringBuilder _logger = new StringBuilder();
 
 		protected Log()
 		{
 		}
-
 
 		public static Log GetLog()
 		{

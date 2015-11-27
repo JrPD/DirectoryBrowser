@@ -4,8 +4,6 @@ using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Web;
 using WebApiFirst.Models;
 
 namespace WebApiFirst.Classes
@@ -13,6 +11,7 @@ namespace WebApiFirst.Classes
 	public class DirManager
 	{
 		private Log _loger = Log.GetLog();
+
 		// to recursive function WalkDirectoryTree
 		private readonly int _deepLevel;
 
@@ -57,11 +56,11 @@ namespace WebApiFirst.Classes
 
 			// add directories to list
 			if (dir != null)
-				items.AddRange(dir.Select(item => new DirectoryItems {Path = item.FullName, Name = item.Name}));
+				items.AddRange(dir.Select(item => new DirectoryItems { Path = item.FullName, Name = item.Name }));
 
 			// add files to list
 			if (files != null)
-				items.AddRange(files.Select(file => new DirectoryItems {Path = file.FullName, Name = file.Name}));
+				items.AddRange(files.Select(file => new DirectoryItems { Path = file.FullName, Name = file.Name }));
 			return items;
 		}
 
@@ -78,7 +77,7 @@ namespace WebApiFirst.Classes
 					FilesLarge = FilesCount.Large,
 					FilesMedium = FilesCount.Medium
 				});
-				items.Add(new DirectoryItems() {Path = "e:\\", Name = "E"});
+				items.Add(new DirectoryItems() { Path = "e:\\", Name = "E" });
 			}
 			else
 			{
@@ -157,7 +156,7 @@ namespace WebApiFirst.Classes
 
 		private void CountFileWeight(ref FileInfo[] files)
 		{
-			const int mbyte = 1024*1024;
+			const int mbyte = 1024 * 1024;
 
 			foreach (FileInfo file in files)
 			{
@@ -168,11 +167,11 @@ namespace WebApiFirst.Classes
 					//Debug.WriteLine("{0}", fileSize);
 				}
 
-				if (fileSize < (int) FileSizes.Small)
+				if (fileSize < (int)FileSizes.Small)
 				{
 					FilesCount.AddSmall();
 				}
-				else if (fileSize < (int) FileSizes.Medium)
+				else if (fileSize < (int)FileSizes.Medium)
 				{
 					FilesCount.AddMedium();
 				}

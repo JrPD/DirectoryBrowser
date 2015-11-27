@@ -2,146 +2,44 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 	<title>directory App</title>
-	<link rel="stylesheet" type="text/css" href="/Content/bootstrap.css"/>
+	<link rel="stylesheet" type="text/css" href="/Content/bootstrap.min.css" />
+	<link rel="stylesheet" type="text/css" href="/Content/Site.css" />
 	<script src="/Scripts/jquery-2.0.3.min.js"></script>
-	<script src="/Scripts/bootstrap.js"></script>
 	<script src="/Scripts/angular.js"></script>
 	<script src="Scripts/app/dirManager.js"></script>
-
-	<style>
-		.col-md-3 {
-			border: 1px solid #00ff00;
-		}
-		li:hover {
-			border: 1px solid #00bfff;
-		}
-		.dirLoadingImg {
-			height: 30px;
-		}
-		.mainContainer {
-			padding	: 0 400px;
-			text-align: left;
-			min-width: 50%;
-			min-height: 50%;
-		}
-		.current {
-			padding: 10px 5px;
-			height: 30px
-		}
-	</style>
 </head>
 <body class="mainContainer">
 
+	<div ng-app="myapp" ng-controller="dirCtrl">
+		<h2>Browse Directories</h2>
+		<div class="row">
 
-<div ng-app="myapp" ng-controller="dirCtrl">
-	<h2>Browse Directories</h2>
-	<div class="row">
-
-		<div class="col-md-3">
-			<div>Less than 10Mb</div>
-			<div>{{filesSmall}}</div>
-		</div>
-		<div class="col-md-3">
-			<div>10Mb-50Mb</div>
-			<div>{{filesMedium}}</div>
-		</div>
-		<div class="col-md-3">
-			<div>More 50Mb</div>
-			<div>{{filesHeight}}</div>
-		</div>
-		<div class="col-md-1">
-			<img id="LoadingImage" class="dirLoadingImg" hidden src="Content/ajax-loader-large.gif"/>
+			<div class="col-md-3">
+				<div>Less than 10Mb</div>
+				<div>{{filesSmall}}</div>
+			</div>
+			<div class="col-md-3">
+				<div>10Mb-50Mb</div>
+				<div>{{filesMedium}}</div>
+			</div>
+			<div class="col-md-3">
+				<div>More 50Mb</div>
+				<div>{{filesHeight}}</div>
+			</div>
+			<div class="col-md-1">
+				<img id="LoadingImage" class="dirLoadingImg" hidden src="Content/ajax-loader-large.gif" />
+			</div>
 		</div>
 
+		<div class="row current">Current directory: <b>{{currentDir}}</b></div>
+
+		<div class="row">
+			<ul id="" style="list-style-type: none; padding: 20px 0">
+				<li style="padding: 5px 20px;" ng-repeat="x in directories" ng-click="click(this)">
+					<a href="#{{x.Path}}"> {{x.Name}}</a>
+				</li>
+			</ul>
+		</div>
 	</div>
-
-	<div class="row current">Current directory: <b>{{currentDir}}</b></div>
-
-	<div class="row">
-		<ul id="" style="list-style-type: none; padding: 20px; 0">
-			<li style="padding: 5px 20px;" ng-repeat="x in directories" ng-click="click(this)">
-				<a href="#{{x.Path}}"> {{x.Name}}</a>
-			</li>
-		</ul>
-	</div>
-
-</div>
-
 </body>
-
 </html>
-
-<!--<div>
-	<h2>All Directories</h2>
-	<ul id="directories" style="List-style-type:none;"/>
-</div>
-<div>
-	<h2>Search by ID</h2>
-	<input type="text" id="dirId" size="5"/>
-	<input type="button" value="Search" onclick="find();"/>
-	<p id="directory"/>
-</div>
-
-<script>
-	var uri = 'api/directories';
-
-	$(document).ready(function () {
-	  // Send an AJAX request
-	  $.getJSON(uri)
-		  .done(function (data) {
-			// On success, 'data' contains a list of directories.
-			FillList(data);
-		  });
-	});
-
-	function FillData(data) {
-		$('<li>')
-			.add('<a>', { href: '-1', text: '../' })
-			.appendTo($('#directories'));
-		FillList(data);
-	}
-
-	function FillList(data) {
-		$.each(data, function(key, item) {
-			// Add a list item for the directory.
-			($('<li>').append
-				('<a  href="#' + item.Id + '" class="dir" onclick="BrowseDirectory(this)">' + item.Name + '</a>'))
-				.appendTo($('#directories'));
-		});
-	}
-
-	function BrowseDirectory(a) {
-		//var id = (a).href.split('/').pop().replace('#', '');
-		var id = (a).innerText;
-		if (id==="../") {
-			id = 0;
-		}
-		$.getJSON(uri + '/' + id)
-			.done(function (data) {
-				var myNode = document.getElementById("directories");
-				while (myNode.firstChild) {
-					myNode.removeChild(myNode.firstChild);
-				}
-				//('#directories').innerHTML="";
-				FillList(data);
-			})
-			.fail(function (jqXHR, textStatus, err) {
-				$('#directory').text('Error: ' + err);
-			});
-	};
-
-	function formatItem(item) {
-	  return item.Id + ':	' + item.Name;
-	}
-
-	function find() {
-	  var id = $('#dirId').val();
-	  $.getJSON(uri + '/' + id)
-		  .done(function (data) {
-			$('#directory').text(formatItem(data));
-		  })
-		  .fail(function (jqXHR, textStatus, err) {
-			$('#directory').text('Error: ' + err);
-		  });
-	}
-	</script>-->

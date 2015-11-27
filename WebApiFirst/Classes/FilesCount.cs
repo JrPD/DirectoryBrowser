@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Web;
-
-namespace WebApiFirst.Classes
+﻿namespace WebApiFirst.Classes
 {
 	public static class FilesCount
 	{
@@ -21,7 +14,6 @@ namespace WebApiFirst.Classes
 		public static int Medium { get; set; }
 
 		public static int Large { get; set; }
-
 
 		public static void AddSmall()
 		{

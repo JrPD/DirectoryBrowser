@@ -1,0 +1,19 @@
+﻿.col-md-3 {
+			border: 1px solid #00ff00;
+		}
+		li:hover {
+			border: 1px solid #00bfff;
+		}
+		.dirLoadingImg {
+			height: 30px;
+		}
+		.mainContainer {
+			padding	: 0 400px;
+			text-align: left;
+			min-width: 50%;
+			min-height: 50%;
+		}
+		.current {
+			padding: 10px 5px;
+			height: 30px
+		}

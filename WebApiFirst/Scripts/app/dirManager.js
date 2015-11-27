@@ -29,7 +29,7 @@
 			.error(function (response) {
 				$("#LoadingImage").hide();
 
-				if (response.Message!= null)
+				if (response.Message!== null)
 					alert((response.Message));
 				else {
 					alert((response));
