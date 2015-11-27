@@ -25,13 +25,37 @@ namespace WebApiFirst.Classes
 			}
 		}
 
-		// concatenate string
-		private string MakePath(string dir)
+		/// <summary>
+		/// resursive obtain information about files in directory and subdirectories
+		/// </summary>
+		/// <param name="root"></param>
+		/// <param name="deepLevel"></param>
+		public void WalkDirectoryTree(DirectoryInfo root, int deepLevel)
 		{
-			//todo change this
-			return dir.Replace("[", "").Replace("]", "").Replace(@"""", "").Replace(",", "\\");
+			FileInfo[] files = null;
+
+			Getfiles(ref files, root);
+			if (files == null)
+			{
+				return;
+			}
+			CountFileWeight(ref files);
+
+			deepLevel--;
+			if (deepLevel < 0) return;
+
+			var subDirs = root.GetDirectories();
+			foreach (DirectoryInfo dirInfo in subDirs)
+			{
+				WalkDirectoryTree(dirInfo, deepLevel);
+			}
 		}
 
+		public DirectoryInfo GetDirInfo(string dir)
+		{
+			string path = MakePath(dir);
+			return new DirectoryInfo(path);
+		}
 		public List<DirectoryItems> GetDirs(System.IO.DirectoryInfo info)
 		{
 			List<DirectoryItems> items = new List<DirectoryItems>();
@@ -64,6 +88,13 @@ namespace WebApiFirst.Classes
 			return items;
 		}
 
+		// concatenate string
+		private string MakePath(string dir)
+		{
+			//todo change this
+			return dir.Replace("[", "").Replace("]", "").Replace(@"""", "").Replace(",", "\\");
+		}
+		
 		private void CheckIfRoot(List<DirectoryItems> items, DirectoryInfo info)
 		{
 			// if root, add discs
@@ -128,32 +159,6 @@ namespace WebApiFirst.Classes
 			}
 		}
 
-		/// <summary>
-		/// resursive obtain information about files in directory and subdirectories
-		/// </summary>
-		/// <param name="root"></param>
-		/// <param name="deepLevel"></param>
-		public void WalkDirectoryTree(DirectoryInfo root, int deepLevel)
-		{
-			FileInfo[] files = null;
-
-			Getfiles(ref files, root);
-			if (files == null)
-			{
-				return;
-			}
-			CountFileWeight(ref files);
-
-			deepLevel--;
-			if (deepLevel < 0) return;
-
-			var subDirs = root.GetDirectories();
-			foreach (DirectoryInfo dirInfo in subDirs)
-			{
-				WalkDirectoryTree(dirInfo, deepLevel);
-			}
-		}
-
 		private void CountFileWeight(ref FileInfo[] files)
 		{
 			const int mbyte = 1024 * 1024;
@@ -200,12 +205,6 @@ namespace WebApiFirst.Classes
 			{
 				Debug.WriteLine(e.Message);
 			}
-		}
-
-		public DirectoryInfo GetDirInfo(string dir)
-		{
-			string path = MakePath(dir);
-			return new DirectoryInfo(path);
 		}
 
 		/// <summary>
