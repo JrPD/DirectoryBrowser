@@ -20,7 +20,7 @@ namespace WebApiFirst.Controllers
 			var info = new DirectoryInfo(path);
 
 			var manager = new DirManager();
-			List<DirectoryItems> directories = manager.GetDirs(info);
+			List<DirectoryItems> directories = manager.GetDirectoriesFromDirectory(info);
 
 			return directories;
 		}
@@ -34,9 +34,9 @@ namespace WebApiFirst.Controllers
 		{
 			_loger.Clear();
 			var manager = new DirManager();
-			var info = manager.GetDirInfo(dir);
+			var info = DirInformation.GetDirInfo(dir);
 
-			var directories = manager.GetDirs(info);
+			var directories = manager.GetDirectoriesFromDirectory(info);
 
 			if (_loger.ToString().Length != 0)
 			{

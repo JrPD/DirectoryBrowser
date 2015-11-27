@@ -889,12 +889,14 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Classes\DirManager.cs" />
     <Compile Include="Classes\FilesCount.cs" />
+    <Compile Include="Classes\DirInformation.cs" />
     <Compile Include="Classes\Log.cs" />
+    <Compile Include="Classes\WalkDirectory.cs" />
     <Compile Include="Controllers\DirectoriesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\DirectoryItems.cs" />
+    <Compile Include="Classes\Models\DirectoryItems.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
