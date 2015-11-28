@@ -17,10 +17,9 @@ namespace WebApiFirst.Controllers
 		{
 			_loger.Clear();
 			string path = HttpRuntime.AppDomainAppPath;
-			var info = new DirectoryInfo(path);
 
-			var manager = new DirManager();
-			List<DirectoryItems> directories = manager.GetDirectoriesFromDirectory(info);
+			var manager = new DirManager(new DirectoryInfo(path));
+			List<DirectoryItems> directories = manager.GetDirectoriesFromDirectory();
 
 			return directories;
 		}
@@ -33,10 +32,10 @@ namespace WebApiFirst.Controllers
 		public IHttpActionResult GetDirectories(string dir)
 		{
 			_loger.Clear();
-			var manager = new DirManager();
-			var info = DirInformation.GetDirInfo(dir);
 
-			var directories = manager.GetDirectoriesFromDirectory(info);
+			var manager = new DirManager(DirInformation.GetDirInfo(dir));
+
+			var directories = manager.GetDirectoriesFromDirectory();
 
 			if (_loger.ToString().Length != 0)
 			{
@@ -47,6 +46,7 @@ namespace WebApiFirst.Controllers
 			{
 				return NotFound();
 			}
+
 			return Ok(directories);
 		}
 	}

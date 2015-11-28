@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using WebApiFirst.Models;
@@ -10,85 +8,82 @@ namespace WebApiFirst.Classes
 {
 	public class DirManager
 	{
-		private Log _loger = Log.GetLog();
+		//current directory
+		private readonly DirectoryInfo _currentDir;
 
+		// list of directories and files
 		private List<DirectoryItems> _dirItems;
-		
-		public DirManager()
+
+		private DirectoryInfo[] _dirs;
+		private FileInfo[] _files;
+
+		public DirManager(DirectoryInfo info)
 		{
-			_dirItems =new List<DirectoryItems>();
+			_currentDir = info;
+			_dirItems = new List<DirectoryItems>();
 		}
 
-		public List<DirectoryItems> GetDirectoriesFromDirectory(DirectoryInfo info)
+		public List<DirectoryItems> GetDirectoriesFromDirectory()
 		{
-			DirectoryInfo[] dir = null;
-			FileInfo[] files = null;
-
-			if (info == null)
+			if (_currentDir == null)
 			{
 				return null;
 			}
 
-			GetFilesAndDirs(ref files, ref dir, info);
+			GetFilesAndDirs();
 
-			if (files == null)
+			if (_files == null && _dirs == null)
 			{
 				return _dirItems;
 			}
-			// count small, medium, large weight files
-			DirectoryWalker.CountFiles(info);
 
-			CheckIfRoot(_dirItems, info);
+			// count small, medium, large weight files
+			new DirectoryWalker(_currentDir).CountFiles();
+
+			CheckIfRoot();
 
 			// add directories to list
-			if (dir != null)
-				_dirItems.AddRange(dir.Select(item => new DirectoryItems { Path = item.FullName, Name = item.Name }));
+			AddItemsToList();
 
-			// add files to list
-				_dirItems.AddRange(files.Select(file => new DirectoryItems { Path = file.FullName, Name = file.Name }));
 			return _dirItems;
 		}
-		
-		private void GetFilesAndDirs(ref FileInfo[] files, ref DirectoryInfo[] dir, DirectoryInfo info)
+
+		private void AddItemsToList()
+		{
+			if (_dirs != null)
+				_dirItems.AddRange(_dirs.Select(item => new DirectoryItems { Path = item.FullName, Name = item.Name }));
+
+			if (_files != null)
+				_dirItems.AddRange(_files.Select(file => new DirectoryItems { Path = file.FullName, Name = file.Name }));
+		}
+
+		private void GetFilesAndDirs()
 		{
 			// get derectories
 			try
 			{
-				if (info.Attributes.HasFlag(FileAttributes.Directory))
+				if (_currentDir.Attributes.HasFlag(FileAttributes.Directory))
 				{
-					files = info.GetFiles("*.*");
-					dir = info.GetDirectories();
+					_files = _currentDir.GetFiles("*.*");
+					_dirs = _currentDir.GetDirectories();
 				}
 				else
 				{
-					_loger.Write("It is a FILE");
+					Log.GetLog().Write("It is a FILE");
 				}
-			}
-			catch (DirectoryNotFoundException e)
-			{
-				_loger.Write(e.Message);
-			}
-			catch (UnauthorizedAccessException e)
-			{
-				_loger.Write(e.Message);
-
-				// if no access
-				info = info.Parent;
-				if (info != null) dir = info.GetDirectories();
-				if (info != null) files = info.GetFiles("*.*");
 			}
 			catch (Exception e)
 			{
-				_loger.Write(e.Message);
+				Log.GetLog().Write(e.Message);
 			}
 		}
-		
-		private void CheckIfRoot(List<DirectoryItems> items, DirectoryInfo info)
+
+		private void CheckIfRoot()
 		{
 			// if root, add discs
-			if (info.Name.ToLower() == info.Root.Name.ToLower())
+			if (_currentDir.Name.ToLower() == _currentDir.Root.Name.ToLower())
 			{
-				items.Add(new DirectoryItems()
+				_dirItems.Add(new DirectoryItems()
 				{
 					Path = "c:\\",
 					Name = "C",
@@ -96,15 +91,15 @@ namespace WebApiFirst.Classes
 					FilesLarge = FilesCount.Large,
 					FilesMedium = FilesCount.Medium
 				});
-				items.Add(new DirectoryItems() { Path = "e:\\", Name = "E" });
+				_dirItems.Add(new DirectoryItems() { Path = "e:\\", Name = "E" });
 			}
 			else
 			{
 				// add parent directory link
-				if (info.Parent != null)
-					items.Add(new DirectoryItems()
+				if (_currentDir.Parent != null)
+					_dirItems.Add(new DirectoryItems()
 					{
-						Path = info.Parent.FullName,
+						Path = _currentDir.Parent.FullName,
 						Name = "../",
 						FilesSmall = FilesCount.Small,
 						FilesLarge = FilesCount.Large,
@@ -112,7 +107,5 @@ namespace WebApiFirst.Classes
 					});
 			}
 		}
-
-		
 	}
 }

@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace WebApiFirst.Classes
 {
@@ -6,9 +7,17 @@ namespace WebApiFirst.Classes
 	{
 		public static DirectoryInfo GetDirInfo(string dir)
 		{
-			string path = MakePath(dir);
-			return new DirectoryInfo(path);
+			try
+			{
+				string path = MakePath(dir);
+				return new DirectoryInfo(path);
+			}
+			catch (Exception)
+			{
+				return null;
+			}
 		}
+
 		// concatenate string
 		private static string MakePath(string dir)
 		{
