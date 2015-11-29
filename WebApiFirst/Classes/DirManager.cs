@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using WebApiFirst.Models;
+using WebApiFirst.Classes.Models;
 
 namespace WebApiFirst.Classes
 {
@@ -83,29 +83,39 @@ namespace WebApiFirst.Classes
 			// if root, add discs
 			if (_currentDir.Name.ToLower() == _currentDir.Root.Name.ToLower())
 			{
+				AddRootDiscs();
+			}
+			// add parent directory link
+			else	
+			{
+				AddParentDirectory();
+			}
+		}
+
+		private void AddParentDirectory()
+		{
+			if (_currentDir.Parent != null)
 				_dirItems.Add(new DirectoryItems()
 				{
-					Path = "c:\\",
-					Name = "C",
+					Path = _currentDir.Parent.FullName,
+					Name = "../",
 					FilesSmall = FilesCount.Small,
 					FilesLarge = FilesCount.Large,
 					FilesMedium = FilesCount.Medium
 				});
-				_dirItems.Add(new DirectoryItems() { Path = "e:\\", Name = "E" });
-			}
-			else
+		}
+
+		private void AddRootDiscs()
+		{
+			_dirItems.Add(new DirectoryItems()
 			{
-				// add parent directory link
-				if (_currentDir.Parent != null)
-					_dirItems.Add(new DirectoryItems()
-					{
-						Path = _currentDir.Parent.FullName,
-						Name = "../",
-						FilesSmall = FilesCount.Small,
-						FilesLarge = FilesCount.Large,
-						FilesMedium = FilesCount.Medium
-					});
-			}
+				Path = "c:\\",
+				Name = "C",
+				FilesSmall = FilesCount.Small,
+				FilesLarge = FilesCount.Large,
+				FilesMedium = FilesCount.Medium
+			});
+			_dirItems.Add(new DirectoryItems() {Path = "e:\\", Name = "E"});
 		}
 	}
 }

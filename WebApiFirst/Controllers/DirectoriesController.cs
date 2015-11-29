@@ -4,7 +4,7 @@ using System.Net;
 using System.Web;
 using System.Web.Http;
 using WebApiFirst.Classes;
-using WebApiFirst.Models;
+using WebApiFirst.Classes.Models;
 
 namespace WebApiFirst.Controllers
 {

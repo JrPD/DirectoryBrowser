@@ -9,11 +9,11 @@
 			Large = 0;
 		}
 
-		public static int Small { get; set; }
+		public static int Small { get; private set; }
 
-		public static int Medium { get; set; }
+		public static int Medium { get; private set; }
 
-		public static int Large { get; set; }
+		public static int Large { get; private set; }
 
 		public static void AddSmall()
 		{

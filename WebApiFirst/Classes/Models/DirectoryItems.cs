@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace WebApiFirst.Models
+﻿namespace WebApiFirst.Classes.Models
 {
 	public class DirectoryItems
 	{
